@@ -1,19 +1,22 @@
-import { ClerkProvider } from '@clerk/nextjs'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { Providers } from '@/components/providers'
+import { ClerkProvider } from "@clerk/nextjs";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Providers } from "@/components/providers";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'AI Fitness Coach',
-  description: 'Your personal AI-powered fitness companion',
-}
+  title: "TwelveAbs",
+  description: "Your personal AI-powered fitness companion",
+  icons: {
+    icon: "/icon.svg",
+  },
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <ClerkProvider>
@@ -23,5 +26,5 @@ export default function RootLayout({
         </body>
       </html>
     </ClerkProvider>
-  )
+  );
 }
