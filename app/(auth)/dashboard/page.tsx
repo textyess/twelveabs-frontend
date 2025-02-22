@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { WorkoutSessionsTable } from "@/components/workout-sessions-table";
 import { WorkoutSessionsColumns } from "@/components/work-sessions-columns";
@@ -41,13 +42,15 @@ export default async function DashboardPage() {
               Track your fitness journey and see your progress over time.
             </p>
           </div>
-          <Button
-            size="lg"
-            className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
-          >
-            <PlayCircle className="mr-2 h-5 w-5" />
-            Start New Workout
-          </Button>
+          <Link href="/workout/new">
+            <Button
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
+            >
+              <PlayCircle className="mr-2 h-5 w-5" />
+              Start New Workout
+            </Button>
+          </Link>
         </div>
       </div>
 
