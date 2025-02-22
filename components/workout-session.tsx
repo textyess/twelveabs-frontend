@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Camera, StopCircle, Play, Pause, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useUser } from "@clerk/nextjs";
+import { createSupabaseClient } from "@/lib/supabase/client";
 
 export function WorkoutSession() {
+  const supabase = createSupabaseClient();
+  const { user } = useUser();
   const [isConnected, setIsConnected] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -21,6 +25,7 @@ export function WorkoutSession() {
   const streamRef = useRef<MediaStream | null>(null);
   const frameLoopRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number>(0);
+  const sessionStartTimeRef = useRef<number>(0);
   const frameDelayMs = 1000; // 1 second delay between frames
 
   const connect = () => {
@@ -217,7 +222,8 @@ export function WorkoutSession() {
 
     setIsStreaming(true);
     setIsSessionActive(true);
-    lastFrameTimeRef.current = 0; // Reset frame timer to start sending immediately
+    sessionStartTimeRef.current = Date.now();
+    lastFrameTimeRef.current = 0;
 
     // Send start session message with active status
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -291,7 +297,7 @@ export function WorkoutSession() {
     logMessage("Started streaming workout session");
   };
 
-  const stopVideoStream = () => {
+  const stopVideoStream = async () => {
     // Cancel the animation frame if it exists
     if (frameLoopRef.current !== null) {
       cancelAnimationFrame(frameLoopRef.current);
@@ -308,8 +314,61 @@ export function WorkoutSession() {
       );
     }
 
+    try {
+      // First, get the profile_id from the profiles table using the Clerk ID
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("clerk_id", user?.id)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching profile:", profileError);
+        throw profileError;
+      }
+
+      if (!profileData?.id) {
+        throw new Error("Profile not found");
+      }
+
+      // Calculate duration in minutes from the session start time
+      const sessionDuration = Math.max(
+        1,
+        Math.round((Date.now() - sessionStartTimeRef.current) / (1000 * 60))
+      );
+
+      // Save workout session directly to Supabase using the profile_id
+      const { data, error } = await supabase
+        .from("workout_sessions")
+        .insert([
+          {
+            profile_id: profileData.id,
+            session_type: "guided",
+            duration_minutes: sessionDuration,
+            ended_at: new Date().toISOString(),
+            status: "completed",
+            notes: "AI-guided workout session completed",
+            exercises: [],
+            calories_burned: 0,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
+      logMessage("Workout session saved successfully");
+    } catch (error) {
+      console.error("Error saving workout session:", error);
+      logMessage("Failed to save workout session");
+    }
+
     setIsStreaming(false);
     setIsSessionActive(false);
+    sessionStartTimeRef.current = 0;
     lastFrameTimeRef.current = 0;
     logMessage("Stopped streaming workout session");
   };

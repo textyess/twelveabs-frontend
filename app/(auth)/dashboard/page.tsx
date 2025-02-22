@@ -24,11 +24,15 @@ export default async function DashboardPage() {
     .single();
 
   // Get the user's workout sessions
-  const { data: workoutSessions } = await supabase
+  const { data: workoutSessions, error: workoutSessionsError } = await supabase
     .from("workout_sessions")
     .select("*")
     .eq("profile_id", profile?.id)
-    .order("created_at", { ascending: false });
+    .order("started_at", { ascending: false });
+
+  if (workoutSessionsError) {
+    console.error("Error fetching workout sessions:", workoutSessionsError);
+  }
 
   return (
     <div className="container max-w-6xl mx-auto px-4">

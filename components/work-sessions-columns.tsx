@@ -4,19 +4,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-
-export type WorkoutSession = {
-  id: string;
-  created_at: string;
-  completed_at?: string;
-  status: "in_progress" | "completed" | "cancelled";
-  workout_type: string;
-  duration_minutes?: number;
-};
+import { type WorkoutSession } from "@/lib/types/database";
 
 export const WorkoutSessionsColumns: ColumnDef<WorkoutSession>[] = [
   {
-    accessorKey: "workout_type",
+    accessorKey: "session_type",
     header: ({ column }) => {
       return (
         <Button
@@ -24,14 +16,18 @@ export const WorkoutSessionsColumns: ColumnDef<WorkoutSession>[] = [
           className="text-gray-100 hover:text-gray-300"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Workout Type
+          Session Type
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const type = row.getValue("session_type") as string;
+      return <div className="text-gray-300 capitalize">{type}</div>;
+    },
   },
   {
-    accessorKey: "created_at",
+    accessorKey: "started_at",
     header: ({ column }) => {
       return (
         <Button
@@ -45,7 +41,7 @@ export const WorkoutSessionsColumns: ColumnDef<WorkoutSession>[] = [
       );
     },
     cell: ({ row }) => {
-      const date = new Date(row.getValue("created_at"));
+      const date = new Date(row.getValue("started_at"));
       return (
         <div className="text-gray-300">
           {formatDistanceToNow(date, { addSuffix: true })}
