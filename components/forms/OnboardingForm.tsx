@@ -346,7 +346,7 @@ export default function OnboardingForm({ userId }: { userId: string }) {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full border-gray-600 text-gray-800 hover:bg-gray-700"
+                    className="w-full border-gray-600 text-gray-800 hover:bg-gray-700 hover:text-white"
                     onClick={() => setStep(1)}
                   >
                     Previous
@@ -463,7 +463,7 @@ export default function OnboardingForm({ userId }: { userId: string }) {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full border-gray-600 text-gray-800 hover:bg-gray-700 hover:text-gray-300"
+                    className="w-full border-gray-600 text-gray-800 hover:bg-gray-700 hover:text-white"
                     onClick={() => setStep(2)}
                   >
                     Previous
