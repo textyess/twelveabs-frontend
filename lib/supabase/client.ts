@@ -30,10 +30,7 @@ export function createSupabaseClient(supabaseToken?: string) {
   );
 
   // Debug: Log the current session
-  client.auth.getSession().then((session) => {
-    console.log("Debug - Current session:", session);
-    console.log("Debug - Access token:", session.data.session?.access_token);
-  });
+  client.auth.getSession().then((session) => {});
 
   return client;
 }

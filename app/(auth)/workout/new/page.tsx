@@ -20,7 +20,7 @@ export default async function NewWorkoutPage() {
         </p>
       </div>
 
-      <WorkoutSession />
+      <WorkoutSession userId={userId} />
     </div>
   );
 }
