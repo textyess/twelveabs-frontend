@@ -217,6 +217,7 @@ export function WorkoutSession() {
 
     setIsStreaming(true);
     setIsSessionActive(true);
+    lastFrameTimeRef.current = 0; // Reset frame timer to start sending immediately
 
     // Send start session message with active status
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -243,6 +244,12 @@ export function WorkoutSession() {
         return;
       }
 
+      // Debug logging for frame conditions
+      const timeSinceLastFrame = now - lastFrameTimeRef.current;
+      logMessage(
+        `Time since last frame: ${timeSinceLastFrame}ms, Audio playing: ${isAudioPlaying}, Session active: ${isSessionActive}`
+      );
+
       // Only send frame if enough time has passed and we're not playing audio
       if (
         isSessionActive &&
@@ -259,7 +266,7 @@ export function WorkoutSession() {
               if (blob && wsRef.current?.readyState === WebSocket.OPEN) {
                 wsRef.current.send(blob);
                 lastFrameTimeRef.current = now;
-                logMessage("Frame sent");
+                logMessage("Frame sent successfully");
               }
             },
             "image/jpeg",
@@ -269,6 +276,8 @@ export function WorkoutSession() {
           console.error("Error capturing frame:", error);
           logMessage("Error capturing frame: " + error);
         }
+      } else {
+        logMessage("Skipping frame: conditions not met");
       }
 
       // Continue the frame loop
@@ -340,7 +349,7 @@ export function WorkoutSession() {
         if (prev === null || prev <= 0) {
           clearInterval(interval);
           if (prev === 0) {
-            startVideoStream();
+            initiateStream(); // Changed from startVideoStream to initiateStream
           }
           return null;
         }
