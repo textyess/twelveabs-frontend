@@ -46,7 +46,7 @@ export default async function DashboardPage() {
               Track your fitness journey and see your progress over time.
             </p>
           </div>
-          <Link href="/workout/new">
+          <Link href="/workout/partner-selection">
             <Button
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"

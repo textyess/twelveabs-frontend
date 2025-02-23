@@ -18,9 +18,9 @@ const trainers: TrainerCard[] = [
     href: "/workout/new?trainer=arnold",
   },
   {
-    name: "John Cena",
-    image: "/trainers/cena.png",
-    href: "/workout/new?trainer=cena",
+    name: "Goku",
+    image: "/trainers/goku.png",
+    href: "/workout/new?trainer=goku",
   },
   {
     name: "Serena Williams",
