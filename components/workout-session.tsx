@@ -383,19 +383,6 @@ export function WorkoutSession({ userId }: WorkoutSessionProps) {
           </div>
         )}
 
-        {countdown !== null && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-20">
-            <div className="flex flex-col items-center">
-              <span className="text-8xl font-bold text-white animate-pulse mb-4">
-                {countdown === 0 ? "GO!" : countdown}
-              </span>
-              <span className="text-xl text-gray-300">
-                {countdown === 0 ? "Starting session..." : "Get ready..."}
-              </span>
-            </div>
-          </div>
-        )}
-
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
