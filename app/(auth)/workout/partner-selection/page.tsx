@@ -4,38 +4,45 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 interface TrainerCard {
   name: string;
   image: string;
   href: string;
+  available: boolean;
 }
 
 const trainers: TrainerCard[] = [
   {
-    name: "Arnold",
+    name: "Arnold Schwarzenegger",
     image: "/trainers/arnold.png",
     href: "/workout/new?trainer=arnold",
+    available: true,
   },
   {
     name: "Goku",
     image: "/trainers/goku.png",
-    href: "/workout/new?trainer=goku",
+    href: "/coming-soon",
+    available: false,
   },
   {
     name: "Serena Williams",
     image: "/trainers/serena.png",
-    href: "/workout/new?trainer=serena",
+    href: "/coming-soon",
+    available: false,
   },
   {
     name: "The Rock",
     image: "/trainers/the-rock.png",
-    href: "/workout/new?trainer=the-rock",
+    href: "/coming-soon",
+    available: false,
   },
   {
     name: "Mariusz Pudzianowski",
     image: "/trainers/mariusz.png",
-    href: "/workout/new?trainer=mariusz",
+    href: "/coming-soon",
+    available: false,
   },
 ];
 
@@ -82,37 +89,58 @@ export default function PartnerSelectionPage() {
         initial="hidden"
         animate="visible"
       >
-        {trainers.map((trainer, index) => (
+        {trainers.map((trainer) => (
           <motion.div
             key={trainer.name}
             variants={cardVariants}
-            whileHover={{
-              scale: 1.02,
-              transition: { duration: 0.2 },
-            }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={
+              trainer.available
+                ? {
+                    scale: 1.02,
+                    transition: { duration: 0.2 },
+                  }
+                : {}
+            }
+            whileTap={trainer.available ? { scale: 0.98 } : {}}
+            className={!trainer.available ? "opacity-75" : ""}
           >
             <Link href={trainer.href}>
-              <Card className="group border-blue-400 hover:border-blue-600 transition-all duration-300 overflow-hidden">
+              <Card
+                className={`group overflow-hidden ${
+                  trainer.available
+                    ? "border-blue-400 hover:border-blue-600"
+                    : "border-gray-700"
+                } transition-all duration-300`}
+              >
                 <div className="relative h-[30rem] w-full bg-gray-800">
                   <Image
                     src={trainer.image}
                     alt={trainer.name}
                     fill
-                    className="object-cover transition-transform duration-300"
+                    className={`object-cover transition-transform duration-300 ${
+                      !trainer.available ? "grayscale" : ""
+                    }`}
                   />
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-                    whileHover={{ opacity: 0.9 }}
+                    whileHover={trainer.available ? { opacity: 0.9 } : {}}
                     transition={{ duration: 0.2 }}
                   />
                   <motion.div
                     className="absolute bottom-0 left-0 right-0 p-6"
-                    whileHover={{ y: -5 }}
+                    whileHover={trainer.available ? { y: -5 } : {}}
                   >
-                    <h2 className="text-2xl font-bold text-white text-center">
+                    <h2 className="text-2xl font-bold text-white text-center mb-2">
                       {trainer.name}
                     </h2>
+                    {!trainer.available && (
+                      <Badge
+                        variant="secondary"
+                        className="mx-auto block w-fit bg-gray-800/80 text-gray-300"
+                      >
+                        Coming Soon
+                      </Badge>
+                    )}
                   </motion.div>
                 </div>
               </Card>
