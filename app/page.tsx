@@ -21,8 +21,10 @@ export default async function Home() {
           TwelveAbs
         </h1>
         <p className="text-xl mb-8 text-gray-300">
-          Your personal AI-powered fitness companion. Get real-time feedback,
-          personalized workouts, and achieve your fitness goals faster.
+          Experience AI-powered workouts with virtual versions of fitness
+          legends! Train alongside digital recreations of Arnold Schwarzenegger,
+          The Rock, and even Goku. Get personalized guidance inspired by the
+          greatest athletes and bodybuilders of all time.
         </p>
         <div className="space-x-4">
           <SignUpButton mode="modal">
