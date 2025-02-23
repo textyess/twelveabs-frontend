@@ -6,6 +6,7 @@ import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function AuthLayout({
   children,
@@ -14,8 +15,6 @@ export default function AuthLayout({
 }) {
   const { signOut } = useClerk();
   const router = useRouter();
-  const pathname = usePathname();
-  const isOnboarding = pathname === "/onboarding";
 
   const handleSignOut = async () => {
     await signOut();

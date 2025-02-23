@@ -359,12 +359,47 @@ export function WorkoutSession({ userId }: WorkoutSessionProps) {
   }, [shouldSendFrames, isAudioPlaying]);
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="p-6 border-2 border-gray-800 shadow-lg max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-            Workout Session
-          </h2>
+    <div className="mx-auto max-w-6xl">
+      {cameraError && (
+        <Alert
+          variant="destructive"
+          className="mb-4 border border-red-800 bg-red-950/50"
+        >
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="ml-2">{cameraError}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="relative aspect-video bg-gray-900 rounded-xl overflow-hidden border-2 border-gray-800 shadow-inner">
+        {!isCameraActive && !cameraError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-gray-900/90">
+            <Camera className="h-16 w-16 mb-4 opacity-50" />
+            <p className="text-sm font-medium">Camera is currently disabled</p>
+          </div>
+        )}
+
+        {countdown !== null && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-20">
+            <div className="flex flex-col items-center">
+              <span className="text-8xl font-bold text-white animate-pulse mb-4">
+                {countdown === 0 ? "GO!" : countdown}
+              </span>
+              <span className="text-xl text-gray-300">
+                {countdown === 0 ? "Starting session..." : "Get ready..."}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          autoPlay
+          playsInline
+          muted
+        />
+
+        <div className="absolute top-4 left-4 flex gap-3">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <div
@@ -385,116 +420,74 @@ export function WorkoutSession({ userId }: WorkoutSessionProps) {
           </div>
         </div>
 
-        {cameraError && (
-          <Alert
-            variant="destructive"
-            className="mb-4 border border-red-800 bg-red-950/50"
-          >
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="ml-2">{cameraError}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="relative aspect-video bg-gray-900 rounded-xl overflow-hidden border-2 border-gray-800 shadow-inner">
-          {!isCameraActive && !cameraError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-gray-900/90">
-              <Camera className="h-16 w-16 mb-4 opacity-50" />
-              <p className="text-sm font-medium">
-                Camera is currently disabled
-              </p>
-            </div>
+        <div className="absolute top-4 right-4 flex gap-3">
+          {!isCameraActive && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 transition-all duration-200 shadow-lg"
+              onClick={startCamera}
+            >
+              <Camera className="mr-2 h-4 w-4" />
+              Enable Camera
+            </Button>
           )}
 
-          {countdown !== null && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-20">
-              <div className="flex flex-col items-center">
-                <span className="text-8xl font-bold text-white animate-pulse mb-4">
-                  {countdown === 0 ? "GO!" : countdown}
-                </span>
-                <span className="text-xl text-gray-300">
-                  {countdown === 0 ? "Starting session..." : "Get ready..."}
-                </span>
-              </div>
-            </div>
+          {isCameraActive && !isSessionActive && !countdown && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-200 shadow-lg"
+              onClick={startCountdown}
+            >
+              <Play className="mr-2 h-4 w-4" />
+              Start
+            </Button>
           )}
 
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            playsInline
-            muted
-          />
-
-          <div className="absolute top-4 right-4 flex gap-3">
-            {!isCameraActive && (
+          {isSessionActive && (
+            <>
               <Button
                 variant="secondary"
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 hover:scale-105 transition-all duration-200 shadow-lg"
-                onClick={startCamera}
+                className="bg-yellow-600 hover:bg-yellow-700 hover:scale-105 transition-all duration-200 shadow-lg"
+                onClick={toggleSession}
               >
-                <Camera className="mr-2 h-4 w-4" />
-                Enable Camera
+                {isSessionActive ? (
+                  <>
+                    <Pause className="mr-2 h-4 w-4" />
+                    Pause
+                  </>
+                ) : (
+                  <>
+                    <Play className="mr-2 h-4 w-4" />
+                    Resume
+                  </>
+                )}
               </Button>
-            )}
-
-            {isCameraActive && !isSessionActive && !countdown && (
               <Button
                 variant="secondary"
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-200 shadow-lg"
-                onClick={startCountdown}
+                className="bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-200 shadow-lg"
+                onClick={stopSession}
               >
-                <Play className="mr-2 h-4 w-4" />
-                Start
+                <StopCircle className="mr-2 h-4 w-4" />
+                Stop
               </Button>
-            )}
-
-            {isSessionActive && (
-              <>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="bg-yellow-600 hover:bg-yellow-700 hover:scale-105 transition-all duration-200 shadow-lg"
-                  onClick={toggleSession}
-                >
-                  {isSessionActive ? (
-                    <>
-                      <Pause className="mr-2 h-4 w-4" />
-                      Pause
-                    </>
-                  ) : (
-                    <>
-                      <Play className="mr-2 h-4 w-4" />
-                      Resume
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-200 shadow-lg"
-                  onClick={stopSession}
-                >
-                  <StopCircle className="mr-2 h-4 w-4" />
-                  Stop
-                </Button>
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
+      </div>
 
-        {permissionState === "denied" && (
-          <div className="mt-4 p-3 bg-yellow-950/30 border border-yellow-800/50 rounded-lg">
-            <p className="text-yellow-500 text-sm flex items-center">
-              <AlertCircle className="h-4 w-4 mr-2" />
-              Camera access is blocked. Please update your browser settings to
-              allow camera access.
-            </p>
-          </div>
-        )}
-      </Card>
+      {permissionState === "denied" && (
+        <div className="mt-4 p-3 bg-yellow-950/30 border border-yellow-800/50 rounded-lg">
+          <p className="text-yellow-500 text-sm flex items-center">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            Camera access is blocked. Please update your browser settings to
+            allow camera access.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
