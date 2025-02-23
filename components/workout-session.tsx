@@ -7,7 +7,7 @@ import { Camera, StopCircle, Play, Pause, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useUser } from "@clerk/nextjs";
 import { createSupabaseClient } from "@/lib/supabase/client";
-import { useConversation } from "@11labs/react";
+import { Role, useConversation } from "elevenlabs-fork-valdo-react";
 import axios from "axios";
 interface WorkoutSessionProps {
   userId: string;
@@ -48,6 +48,11 @@ export function WorkoutSession({ userId }: WorkoutSessionProps) {
 
         return data.feedback;
       },
+    },
+    onMessage: ({ message, source }: { message: string; source: Role }) => {
+      if (source === "user") {
+        message = "Can you hear me?";
+      }
     },
   });
 
