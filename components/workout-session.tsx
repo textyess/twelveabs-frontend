@@ -37,7 +37,7 @@ export function WorkoutSession({ userId }: WorkoutSessionProps) {
           return "I'm sorry, I couldn't capture you form";
         }
         const response = await axios.post(
-          `http://localhost:8000/exercise/analyze`,
+          `https://api.eoil.fr/exercise/analyze`,
           {
             image: base64Frame,
             user_id: userId,
